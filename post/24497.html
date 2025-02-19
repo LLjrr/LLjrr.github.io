@@ -1,0 +1,211 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Aurora: An innovative relational database service | pEacill</title><meta name="author" content="pEacill"><meta name="copyright" content="pEacill"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本文将介绍Amazon Aurora。Aurora是AWS提供的关系型数据库服务，专门用于处理在线事务处理(OLTP)工作负载。Aurora的设计目标是提供高性能、高可用性和高可扩展性，同时保持与MySQL和PostgreSQL的兼容性。 论文参考：《Amazon Aurora: Design Considerations for High Throughput Cloud-Native Rela">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Aurora: An innovative relational database service">
+<meta property="og:url" content="https://peacill.online/post/24497.html">
+<meta property="og:site_name" content="pEacill">
+<meta property="og:description" content="本文将介绍Amazon Aurora。Aurora是AWS提供的关系型数据库服务，专门用于处理在线事务处理(OLTP)工作负载。Aurora的设计目标是提供高性能、高可用性和高可扩展性，同时保持与MySQL和PostgreSQL的兼容性。 论文参考：《Amazon Aurora: Design Considerations for High Throughput Cloud-Native Rela">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://peacill.online/img/blog/Aurora/cover.jpg">
+<meta property="article:published_time" content="2025-02-18T10:32:47.000Z">
+<meta property="article:modified_time" content="2025-02-18T10:43:23.139Z">
+<meta property="article:author" content="pEacill">
+<meta property="article:tag" content="Distribute">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://peacill.online/img/blog/Aurora/cover.jpg"><link rel="shortcut icon" href="/img/head.jpg"><link rel="canonical" href="https://peacill.online/post/24497.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Aurora: An innovative relational database service',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="pEacill" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/head.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Friend</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/blog/Aurora/cover.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">pEacill</span></a><a class="nav-page-title" href="/"><span class="site-name">Aurora: An innovative relational database service</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Friend</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Aurora: An innovative relational database service</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-02-18T10:32:47.000Z" title="发表于 2025-02-18 18:32:47">2025-02-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-02-18T10:43:23.139Z" title="更新于 2025-02-18 18:43:23">2025-02-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Distributed/">Distributed</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/post/24497.html#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>本文将介绍Amazon Aurora。Aurora是AWS提供的关系型数据库服务，专门用于处理在线事务处理(OLTP)工作负载。Aurora的设计目标是提供高性能、高可用性和高可扩展性，同时保持与MySQL和PostgreSQL的兼容性。</p>
+<p>论文参考：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/aurora.pdf">《Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases》</a></p>
+<p>&emsp;&emsp;Amazon Aurora是AWS提供的一项创新型关系数据库服务，专门面向在线事务处理(OLTP)工作负载。在当今的数据处理领域，性能瓶颈已经从计算和存储转移到了网络传输上。针对这一限制，Aurora提出了全新的关系数据库架构设计。其最显著的特点是将重做日志处理推送到专门为Aurora构建的多租户扩展存储服务中。这种设计不仅减少了网络流量，还实现了快速的崩溃恢复能力，支持零数据丢失的故障转移，并提供了具有自我修复能力的容错存储系统。在技术实现上，Aurora采用了高效的异步机制，在众多存储节点之间达成持久状态的一致性，避免了传统数据库中复杂且通信频繁的恢复协议。这种创新的设计极大地提升了系统的性能和可靠性。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://peacill.online">pEacill</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://peacill.online/post/24497.html">https://peacill.online/post/24497.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://peacill.online" target="_blank">pEacill</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Distribute/">Distribute</a><a class="post-meta__tags" href="/tags/Database/">Database</a></div><div class="post-share"><div class="social-share" data-image="/img/blog/Aurora/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/post/54335.html" title="C++ Lock-free thread-safe data structures(2) - Stack"><img class="cover" src="/img/blog/dsnlock/cover2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">C++ Lock-free thread-safe data structures(2) - Stack</div></div><div class="info-2"><div class="info-item-1">NOTE：本文还未完成！ 本文及下一篇文章将主要介绍一些不基于锁的线程安全的c++数据结构的实现，c++中无锁的数据结构主要基于原子操作和内存序实现。本文将主要介绍无锁栈的实现。本文会使用到一些c++17或c++20的新特性。 参考书目：《c++并发编程实战》 完整代码在GitHub：Github 基于锁的数据结构的实现：C++ concurrent data structures based on lock 建议先看：C++ Lock-free thread-safe data structures（1）- Atomic operations and memory ordering 前言&emsp;&emsp;无锁的数据结构主要基于原子操作与内存序实现。还是从自旋锁这个例子看起： 1234567891011121314class spinlock_mutex&#123;    std::atomic_flag flag;public:    spinlock_mutex(): flag(ATOMIC_FLAG_INIT) &#123;&#125;    void...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/post/7899.html" title="CRAQ：A distributed object storage system"><img class="cover" src="/img/blog/CRAQ/cover.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-11</div><div class="info-item-2">CRAQ：A distributed object storage system</div></div><div class="info-2"><div class="info-item-1">本文将介绍CRAQ(Chain Replication with Apportioned Queries)分布式对象存储系统，该系统主要解决大量读负载的分布式系统中的强一致性与高吞吐量之间的权衡问题。 论文参考：《Object Storage on CRAQ —— High-throughput chain replication for read-mostly workloads》 &emsp;&emsp;在当今云计算时代，分布式存储系统扮演着至关重要的角色。CRAQ(Chain Replication with Apportioned...</div></div></div></a><a class="pagination-related" href="/post/9989.html" title="Raft: A Understandable Consensus Algorithm"><img class="cover" src="/img/blog/Raft/Raft_cover.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-25</div><div class="info-item-2">Raft: A Understandable Consensus Algorithm</div></div><div class="info-2"><div class="info-item-1">本文将详细介绍Raft共识算法。 论文参考：《In Search of an Understandable Consensus...</div></div></div></a><a class="pagination-related" href="/post/7340.html" title="ZooKeeper"><img class="cover" src="/img/blog/zookeeper/cover.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-05</div><div class="info-item-2">ZooKeeper</div></div><div class="info-2"><div class="info-item-1">本文将介绍ZooKeeper，一个开源的分布式协调服务框架，它主要用于解决分布式系统中的一致性问题，提供可靠的协调服务。 论文参考：《ZooKeeper: Wait-free coordination for Internet-scale systems》 引言&emsp;&emsp;ZooKeeper是一个开源的分布式协调服务框架，由Yahoo开发，后捐赠给Apache基金会，现已成为Apache的顶级项目。它旨在为分布式应用提供高效、可靠的协调服务，解决分布式系统中常见的协调问题，如数据一致性、配置管理、集群管理、分布式锁等。 &emsp;&emsp;ZooKeeper的核心设计理念是提供一个简单、高性能的“协调内核”，允许开发者基于其API构建更复杂的分布式协调功能。它通过树形结构的数据模型（类似文件系统）存储数据，并支持顺序一致性、原子性和实时性等特性。此外，ZooKeeper采用了Zab协议（ZooKeeper Atomic...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">pEacill</div><div class="author-info-description">Keep Striving!</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/pEacill"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/pEacill" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:peacill01@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">本网站中所有封面图片均来自于Instagram@linksphotograph的摄影作品</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/24497.html" title="Aurora: An innovative relational database service"><img src="/img/blog/Aurora/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Aurora: An innovative relational database service"/></a><div class="content"><a class="title" href="/post/24497.html" title="Aurora: An innovative relational database service">Aurora: An innovative relational database service</a><time datetime="2025-02-18T10:32:47.000Z" title="发表于 2025-02-18 18:32:47">2025-02-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/54335.html" title="C++ Lock-free thread-safe data structures(2) - Stack"><img src="/img/blog/dsnlock/cover2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="C++ Lock-free thread-safe data structures(2) - Stack"/></a><div class="content"><a class="title" href="/post/54335.html" title="C++ Lock-free thread-safe data structures(2) - Stack">C++ Lock-free thread-safe data structures(2) - Stack</a><time datetime="2025-01-16T07:09:13.000Z" title="发表于 2025-01-16 15:09:13">2025-01-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/7899.html" title="CRAQ：A distributed object storage system"><img src="/img/blog/CRAQ/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CRAQ：A distributed object storage system"/></a><div class="content"><a class="title" href="/post/7899.html" title="CRAQ：A distributed object storage system">CRAQ：A distributed object storage system</a><time datetime="2025-01-11T10:48:22.000Z" title="发表于 2025-01-11 18:48:22">2025-01-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/7340.html" title="ZooKeeper"><img src="/img/blog/zookeeper/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ZooKeeper"/></a><div class="content"><a class="title" href="/post/7340.html" title="ZooKeeper">ZooKeeper</a><time datetime="2025-01-05T06:16:34.000Z" title="发表于 2025-01-05 14:16:34">2025-01-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/303.html" title="C++ Lock-free thread-safe data structures（1）- Atomic operations and memory ordering"><img src="/img/blog/dsnlock/cover1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="C++ Lock-free thread-safe data structures（1）- Atomic operations and memory ordering"/></a><div class="content"><a class="title" href="/post/303.html" title="C++ Lock-free thread-safe data structures（1）- Atomic operations and memory ordering">C++ Lock-free thread-safe data structures（1）- Atomic operations and memory ordering</a><time datetime="2025-01-04T08:09:15.000Z" title="发表于 2025-01-04 16:09:15">2025-01-04</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/footer.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By pEacill</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.isShuoshuo
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: 'Ov23liIJFpxYJSsumkSe',
+      clientSecret: 'd098208f5550f91f3f7da5b6e60850bc56d798d4',
+      repo: 'LLjrr.github.io',
+      owner: 'LLjrr',
+      admin: ['LLjrr'],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || '5d3e9919e643ce59508ede0d9b0020cb'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

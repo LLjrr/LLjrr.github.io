@@ -6,7 +6,7 @@
   <link href="https://peacill.online/atom.xml" rel="self"/>
   
   <link href="https://peacill.online/"/>
-  <updated>2025-02-13T08:32:09.937Z</updated>
+  <updated>2025-02-18T10:43:23.139Z</updated>
   <id>https://peacill.online/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Aurora: An innovative relational database service</title>
+    <link href="https://peacill.online/post/24497.html"/>
+    <id>https://peacill.online/post/24497.html</id>
+    <published>2025-02-18T10:32:47.000Z</published>
+    <updated>2025-02-18T10:43:23.139Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文将介绍Amazon Aurora。Aurora是AWS提供的关系型数据库服务，专门用于处理在线事务处理(OLTP)工作负载。Aurora的设计目标是提供高性能、高可用性和高可扩展性，同时保持与MySQL和PostgreSQL的兼容性。</p><p>论文参考：<a href="https://pdos.csail.mit.edu/6.824/papers/aurora.pdf">《Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases》</a></p><p>&emsp;&emsp;Amazon Aurora是AWS提供的一项创新型关系数据库服务，专门面向在线事务处理(OLTP)工作负载。在当今的数据处理领域，性能瓶颈已经从计算和存储转移到了网络传输上。针对这一限制，Aurora提出了全新的关系数据库架构设计。其最显著的特点是将重做日志处理推送到专门为Aurora构建的多租户扩展存储服务中。这种设计不仅减少了网络流量，还实现了快速的崩溃恢复能力，支持零数据丢失的故障转移，并提供了具有自我修复能力的容错存储系统。在技术实现上，Aurora采用了高效的异步机制，在众多存储节点之间达成持久状态的一致性，避免了传统数据库中复杂且通信频繁的恢复协议。这种创新的设计极大地提升了系统的性能和可靠性。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;本文将介绍Amazon Aurora。Aurora是AWS提供的关系型数据库服务，专门用于处理在线事务处理(OLTP)工作负载。Aurora的设计目标是提供高性能、高可用性和高可扩展性，同时保持与MySQL和PostgreSQL的兼容性。&lt;/p&gt;
+&lt;p&gt;论文参考：&lt;a hr</summary>
+      
+    
+    
+    
+    <category term="Distributed" scheme="https://peacill.online/categories/Distributed/"/>
+    
+    
+    <category term="Distribute" scheme="https://peacill.online/tags/Distribute/"/>
+    
+    <category term="Database" scheme="https://peacill.online/tags/Database/"/>
+    
+  </entry>
   
   <entry>
     <title>C++ Lock-free thread-safe data structures(2) - Stack</title>
